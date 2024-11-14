@@ -10,12 +10,20 @@ use Illuminate\Http\Request;
 
 class orderController extends Controller
 {
+
     public function order()
     {
         $categories = Category::all();
         $menus = Menu::all();
 
         return view("app.staff.newOrder", compact('categories', 'menus'));
+    }
+
+    public function allOrder()
+    {
+        $orders = Order::with("orderItems")->get();
+
+        return view("app.staff.orders", compact('orders'));
     }
 
     public function storeOrder(Request $request)
@@ -45,7 +53,7 @@ class orderController extends Controller
         return response()->json([
             'success' => true,
             'msg' => 'Pesanan berhasil dibuat.',
-            'route' => route('order'),
+            'route' => route('order',   Order::latest()->first()->id),
         ]);
     }
 

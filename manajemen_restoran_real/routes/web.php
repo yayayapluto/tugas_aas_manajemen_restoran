@@ -38,7 +38,8 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware('role:staff')->group(function () {
         Route::get("/new-order", [orderController::class, "order"])->name("neworder");
-        Route::post("/new-order", [orderController::class, "storeOrder"])->name("neworder.submit");
+        Route::post("/new-order", [orderController::class, "storeOrder"])->name("newOrder.submit");
         Route::get("/order/{order_id}", [orderController::class, "checkOrder"])->name("order");
+        Route::get("/orders", [orderController::class, "allOrder"])->name("orders");
     });
 });

@@ -11,6 +11,9 @@
 
     @auth
         <li>
+            <a href="{{URL::previous()}}">Balik</a>
+        </li>
+        <li>
             <a href="{{route("logout")}}">Keluar</a>
         </li>
     @endauth
