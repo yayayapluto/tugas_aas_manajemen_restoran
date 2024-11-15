@@ -2,17 +2,14 @@ document.addEventListener("DOMContentLoaded", function () {
     const forms = document.querySelectorAll("form");
 
     if (forms.length === 0) {
-        console.log("Gaada form");
         return;
     }
 
     forms.forEach(form => {
         form.addEventListener("submit", function (e) {
             e.preventDefault();
-            console.log("anjay");
 
-            const formData = new FormData(document.querySelector("form"));
-            console.log(formData);
+            const formData = new FormData(form);
 
             Swal.fire({
                 title: "Memproses...",
@@ -25,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 timerProgressBar: true,
             });
 
-            fetch(document.querySelector("form").action, {
+            fetch(form.action, {
                 method: "POST",
                 body: formData,
             })

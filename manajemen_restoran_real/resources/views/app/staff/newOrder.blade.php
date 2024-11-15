@@ -1,139 +1,168 @@
-@extends("layouts.public")
+@extends('layouts.public')
 
-@section("title", "Pesanan Baru")
+@section('title', 'Pesanan Baru')
 
-@section("content")
-<div class="container">
-    <div id="left-container">
-        <h2>Kategori</h2>
-        <button id="all-categories-btn">Semua Kategori</button>
-        <div id="category-list">
+@section('content')
+    <div class="container mx-auto p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <div id="left-container" class="bg-white p-6 rounded-lg shadow-md max-h-[500px] overflow-y-auto">
+            <h2 class="text-2xl font-semibold text-[#333333] mb-4">Kategori</h2>
+            <button id="all-categories-btn"
+                class="inline-block mb-4 px-4 py-2 text-white bg-[#333333] rounded-md hover:bg-[#222222] focus:outline-none focus:ring-2 focus:ring-gray-600 transition duration-200 ease-in-out w-full">
+                Semua Kategori
+            </button>
+            <div id="category-list" class="space-y-2"></div>
         </div>
-    </div>
 
-    <div id="center-container">
-        <h2>Menu</h2>
-        <div id="menu-list">
+        <div id="center-container" class="bg-white p-6 rounded-lg shadow-md max-h-[500px] overflow-y-auto">
+            <h2 class="text-2xl font-semibold text-[#333333] mb-4">Menu</h2>
+            <div id="menu-list" class="space-y-4"></div>
         </div>
-    </div>
 
-    <div id="right-container">
-        <h2>Pesanan</h2>
-        <form action="{{route("newOrder.submit")}}" method="POST" id="order-form">
-            @csrf
-            <input type="text" name="customer_name" placeholder="Nama Pelanggan" required>
-            <ul id="order-list"></ul>
-            <input type="hidden" name="order_items" id="order-items">
-            <button type="button" id="clear-order-items">Hapus Pesanan</button>
-            <button type="submit">Kirim Pesanan</button>
-        </form>
+        <div id="right-container" class="bg-white p-6 rounded-lg shadow-md max-h-[500px] overflow-y-auto">
+            <h2 class="text-2xl font-semibold text-[#333333] mb-4">Pesanan</h2>
+            <form action="{{ route('newOrder.submit') }}" method="POST" id="order-form">
+                @csrf
+                <input type="text" name="customer_name" placeholder="Nama Pelanggan" required
+                    class="w-full p-2 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-[#333333] transition duration-200 ease-in-out">
+
+                <input type="hidden" name="order_items" id="order-items">
+
+                <ul id="order-list" class="space-y-3 mb-4"></ul>
+
+                <div class="flex justify-between items-center">
+                    <button type="button" id="clear-order-items"
+                        class="px-4 py-2 text-white bg-red-600 hover:bg-red-700 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 transition duration-200 ease-in-out">
+                        Hapus Pesanan
+                    </button>
+                    <button type="submit"
+                        class="px-4 py-2 text-white bg-[#5A9BCF] hover:bg-[#4A89B1] rounded-md focus:outline-none focus:ring-2 focus:ring-[#5A9BCF] transition duration-200 ease-in-out">
+                        Kirim Pesanan
+                    </button>
+
+                </div>
+            </form>
+        </div>
+
     </div>
-</div>
 @endsection
 
-@section("scripts")
-<script>
-    const categories = @json($categories);
-    const menus = @json($menus);
+@section('scripts')
+    <script>
+        const categories = @json($categories);
+        const menus = @json($menus);
 
-    let orderItems = JSON.parse(localStorage.getItem('orderItems')) || [];
+        let orderItems = JSON.parse(localStorage.getItem('orderItems')) || [];
 
-    const categoryList = document.getElementById('category-list');
-    categories.forEach(category => {
-        const btn = document.createElement('button');
-        btn.textContent = category.category_name;
-        categoryList.appendChild(btn);
+        const categoryList = document.getElementById('category-list');
+        categories.forEach(category => {
+            const btn = document.createElement('button');
+            btn.textContent = category.category_name;
+            btn.classList.add('w-full', 'px-4', 'py-2', 'text-white', 'bg-[#333333]', 'rounded-md',
+                'hover:bg-[#222222]', 'focus:outline-none', 'focus:ring-2', 'focus:ring-gray-600', 'transition',
+                'duration-200', 'ease-in-out');
+            categoryList.appendChild(btn);
 
-        btn.addEventListener('click', () => {
-            filterMenusByCategory(category.id);
-        });
-    });
-
-    const allCategoriesBtn = document.getElementById('all-categories-btn');
-    allCategoriesBtn.addEventListener('click', () => {
-        displayAllMenus();
-    });
-
-    const clearOrderItemsBtn = document.getElementById('clear-order-items');
-    clearOrderItemsBtn.addEventListener('click', () => {
-        localStorage.removeItem('orderItems');
-        orderItems = [];
-        updateOrderList();
-    });
-
-    function filterMenusByCategory(categoryId) {
-        const menuList = document.getElementById('menu-list');
-        menuList.innerHTML = '';
-        const filteredMenus = menus.filter(menu => menu.category_id === categoryId);
-
-        filteredMenus.forEach(menu => {
-            const div = document.createElement('div');
-            div.textContent = `${menu.name} - Rp. ${menu.price}`;
-            const addBtn = document.createElement('button');
-            addBtn.textContent = 'Tambah';
-            div.appendChild(addBtn);
-            menuList.appendChild(div);
-
-            addBtn.addEventListener('click', () => {
-                addMenuToOrder(menu);
+            btn.addEventListener('click', () => {
+                filterMenusByCategory(category.id);
             });
         });
-    }
 
-    function displayAllMenus() {
-        const menuList = document.getElementById('menu-list');
-        menuList.innerHTML = '';
-
-        menus.forEach(menu => {
-            const div = document.createElement('div');
-            div.textContent = `${menu.name} - Rp. ${menu.price}`;
-            const addBtn = document.createElement('button');
-            addBtn.textContent = 'Tambah';
-            div.appendChild(addBtn);
-            menuList.appendChild(div);
-
-            addBtn.addEventListener('click', () => {
-                addMenuToOrder(menu);
-            });
+        const allCategoriesBtn = document.getElementById('all-categories-btn');
+        allCategoriesBtn.addEventListener('click', () => {
+            displayAllMenus();
         });
-    }
 
-    function addMenuToOrder(menu) {
-        const existingOrderItem = orderItems.find(item => item.menu_id === menu.id);
+        const clearOrderItemsBtn = document.getElementById('clear-order-items');
+        clearOrderItemsBtn.addEventListener('click', () => {
+            localStorage.removeItem('orderItems');
+            orderItems = [];
+            updateOrderList();
+        });
 
-        if (existingOrderItem) {
-            existingOrderItem.quantity++;
-            existingOrderItem.subtotal = existingOrderItem.quantity * existingOrderItem.price;
-        } else {
-            orderItems.push({
-                menu_id: menu.id,
-                name: menu.name,
-                price: menu.price,
-                quantity: 1,
-                subtotal: menu.price,
+        function filterMenusByCategory(categoryId) {
+            const menuList = document.getElementById('menu-list');
+            menuList.innerHTML = '';
+            const filteredMenus = menus.filter(menu => menu.category_id === categoryId);
+
+            filteredMenus.forEach(menu => {
+                const div = document.createElement('div');
+                div.classList.add('flex', 'justify-between', 'items-center', 'mb-4');
+                div.innerHTML = `<span class="text-lg">${menu.name} - Rp. ${menu.price}</span>`;
+                const addBtn = document.createElement('button');
+                addBtn.textContent = 'Tambah';
+                addBtn.classList.add('px-4', 'py-2', 'text-white', 'bg-green-600', 'hover:bg-green-700',
+                    'rounded-md', 'focus:outline-none', 'focus:ring-2', 'focus:ring-green-500', 'transition',
+                    'duration-200', 'ease-in-out');
+                div.appendChild(addBtn);
+                menuList.appendChild(div);
+
+                addBtn.addEventListener('click', () => {
+                    addMenuToOrder(menu);
+                });
             });
         }
 
+        function displayAllMenus() {
+            const menuList = document.getElementById('menu-list');
+            menuList.innerHTML = '';
+
+            menus.forEach(menu => {
+                const div = document.createElement('div');
+                div.classList.add('flex', 'justify-between', 'items-center', 'mb-4');
+                div.innerHTML = `<span class="text-lg">${menu.name} - Rp. ${menu.price}</span>`;
+                const addBtn = document.createElement('button');
+                addBtn.textContent = 'Tambah';
+                addBtn.classList.add('px-4', 'py-2', 'text-white', 'bg-green-600', 'hover:bg-green-700',
+                    'rounded-md', 'focus:outline-none', 'focus:ring-2', 'focus:ring-green-500', 'transition',
+                    'duration-200', 'ease-in-out');
+                div.appendChild(addBtn);
+                menuList.appendChild(div);
+
+                addBtn.addEventListener('click', () => {
+                    addMenuToOrder(menu);
+                });
+            });
+        }
+
+        function addMenuToOrder(menu) {
+            const existingOrderItem = orderItems.find(item => item.menu_id === menu.id);
+
+            if (existingOrderItem) {
+                existingOrderItem.quantity++;
+                existingOrderItem.subtotal = existingOrderItem.quantity * existingOrderItem.price;
+            } else {
+                orderItems.push({
+                    menu_id: menu.id,
+                    name: menu.name,
+                    price: menu.price,
+                    quantity: 1,
+                    subtotal: menu.price,
+                });
+            }
+
+            updateOrderList();
+        }
+
+        function updateOrderList() {
+            const orderList = document.getElementById('order-list');
+            orderList.innerHTML = '';
+
+            orderItems.forEach(item => {
+                const li = document.createElement('li');
+                li.classList.add('flex', 'justify-between', 'items-center');
+                li.textContent = `${item.name} - Rp. ${item.price} x ${item.quantity} = Rp. ${item.subtotal}`;
+                orderList.appendChild(li);
+            });
+
+            const orderItemsInput = document.getElementById('order-items');
+            orderItemsInput.value = JSON.stringify(orderItems);
+
+            localStorage.setItem('orderItems', JSON.stringify(orderItems));
+        }
+
         updateOrderList();
-    }
 
-    function updateOrderList() {
-        const orderList = document.getElementById('order-list');
-        orderList.innerHTML = '';
-
-        orderItems.forEach(item => {
-            const li = document.createElement('li');
-            li.textContent = `${item.name} - Rp. ${item.price} x ${item.quantity} = Rp. ${item.subtotal}`;
-            orderList.appendChild(li);
-        });
-
-        const orderItemsInput = document.getElementById('order-items');
-        orderItemsInput.value = JSON.stringify(orderItems);
-        localStorage.setItem('orderItems', JSON.stringify(orderItems));
-    }
-
-    updateOrderList();
-
-    displayAllMenus();
-</script>
+        displayAllMenus();
+    </script>
 @endsection

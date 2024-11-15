@@ -17,7 +17,21 @@ class CategoryFactory extends Factory
     public function definition(): array
     {
         return [
-            "category_name" => fake()->word() . " Category"
+            "category_name" => $this->faker->randomElement([
+                    'Makanan Pembuka',
+                    'Makanan Utama',
+                    'Makanan Penutup',
+                    'Makanan Ringan',
+                    'Makanan Sehat',
+                    'Minuman Segar',
+                    'Minuman Hangat',
+                    'Minuman Dingin',
+                    'Minuman Manis',
+                    'Minuman Kopi',
+                    'Minuman Teh',
+                    'Minuman Jus'
+            ])
         ];
+        
     }
 }

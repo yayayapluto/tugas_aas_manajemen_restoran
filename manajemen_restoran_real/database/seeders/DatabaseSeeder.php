@@ -23,8 +23,8 @@ class DatabaseSeeder extends Seeder
         User::truncate();
         Category::truncate();
         Menu::truncate();
-        // Order::truncate();
-        // OrderItem::truncate();
+        Order::truncate();
+        OrderItem::truncate();
 
         User::create([
             "name" => "admin",
@@ -47,8 +47,8 @@ class DatabaseSeeder extends Seeder
         User::factory(5)->create();
         Category::factory(20)->create();
         Menu::factory(30)->create();
-        Order::factory(15)->create();
-        OrderItem::factory(50)->create();
+        // Order::factory(15)->create();
+        // OrderItem::factory(50)->create();
 
         Schema::enableForeignKeyConstraints();
     }
