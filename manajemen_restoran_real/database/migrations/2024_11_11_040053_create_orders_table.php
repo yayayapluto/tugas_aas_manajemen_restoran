@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string("customer_name");
             $table->decimal("total_price");
             $table->dateTime("order_date")->default(now());
+            $table->foreignId("cashier_id")->constrained("users")->cascadeOnDelete();
             $table->timestamps();
         });
     }

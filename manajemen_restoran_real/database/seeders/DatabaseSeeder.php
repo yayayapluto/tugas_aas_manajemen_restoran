@@ -38,13 +38,7 @@ class DatabaseSeeder extends Seeder
             "role" => "staff"
         ]);
 
-        User::create([
-            "name" => "staff_1",
-            "password" => "staff_1123",
-            "role" => "staff"
-        ]);
-
-        User::factory(5)->create();
+        // User::factory(5)->create();
         Category::factory(20)->create();
         Menu::factory(30)->create();
         // Order::factory(15)->create();

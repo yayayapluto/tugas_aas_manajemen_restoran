@@ -31,7 +31,7 @@
                         <tr class="border-b hover:bg-gray-100 cursor-pointer" data-href="{{ route('menus.show', $menu->id) }}">
                             <td class="py-3 px-6 text-center">{{ $loop->iteration }}</td>
                             <td class="py-3 px-6">{{ $menu->name }}</td>
-                            <td class="py-3 px-6 text-center">{{ number_format($menu->price, 2) }}</td>
+                            <td class="py-3 px-6 text-center">Rp. {{number_format($menu->price, 2) }}</td>
                             <td class="py-3 px-6">{{ $menu->category->category_name }}</td>
                             <td class="py-3 px-6">
                                 <div class="flex justify-end space-x-3">

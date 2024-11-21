@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Menu;
 use App\Models\Order;
 use App\Models\OrderItem;
+use Auth;
 use Illuminate\Http\Request;
 
 class orderController extends Controller
@@ -26,6 +27,12 @@ class orderController extends Controller
         return view("app.staff.orders", compact('orders'));
     }
 
+    public function report()
+    {
+        $orders = Order::with("orderItems")->get();
+        return view("app.admin.report", compact('orders'));
+    }
+
     public function storeOrder(Request $request)
     {
         $validated = $request->validate([
@@ -34,10 +41,52 @@ class orderController extends Controller
         ]);
 
         $orderItems = json_decode($request->order_items, true);
+        /**
+         * Data yang sebelumnya berbentuk JSON seperti ini:
+         * [
+         *     {
+         *         "menu_id": 1,
+         *         "name": "Pempek",
+         *         "price": "908.94",
+         *         "quantity": 1,
+         *         "subtotal": "908.94"
+         *     },
+         *     {
+         *         "menu_id": 2,
+         *         "name": "Susu Jahe",
+         *         "price": "3766.42",
+         *         "quantity": 1,
+         *         "subtotal": "3766.42"
+         *     }
+         * ]
+         *
+         * Setelah di-decode akan menjadi array seperti ini:
+         * [
+         *     [
+         *         "menu_id" => 1,
+         *         "name" => "Pempek",
+         *         "price" => "908.94",
+         *         "quantity" => 1,
+         *         "subtotal" => "908.94"
+         *     ],
+         *     [
+         *         "menu_id" => 2,
+         *         "name" => "Susu Jahe",
+         *         "price" => "3766.42",
+         *         "quantity" => 1,
+         *         "subtotal" => "3766.42"
+         *     ]
+         * ]
+         */
+
 
         $order = Order::create([
             'customer_name' => $validated['customer_name'],
             'total_price' => array_sum(array_column($orderItems, 'subtotal')),
+            /**
+             * Ini bakal SUM semua kolom subtotal dari semua array
+             */
+            'cashier_id' => Auth::user()->id
         ]);
 
         foreach ($orderItems as $item) {
@@ -59,7 +108,7 @@ class orderController extends Controller
 
     public function checkOrder($order_id)
     {
-        $order = Order::with('orderItems.menu')
+        $order = Order::with('orderItems.menu', "cashier")
             ->where('id', $order_id)
             ->first();
 

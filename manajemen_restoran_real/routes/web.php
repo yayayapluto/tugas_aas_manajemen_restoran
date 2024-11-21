@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\aditionalController;
 use App\Http\Controllers\categoryController;
 use App\Http\Controllers\menuController;
 use App\Http\Controllers\orderController;
@@ -28,9 +29,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/logout', [\App\Http\Controllers\AuthController::class, 'logout'])->name("logout");
 
     Route::middleware('role:admin')->group(function () {
-        Route::get('/dashboard', function () {
-            return view("app.admin.dashboard");
-        })->name("dashboard");
+        Route::get('/dashboard', [aditionalController::class, "showDashboard"])->name("dashboard");
+        Route::get('/report', [orderController::class, "report"])->name("report");
         Route::resource("/users", userController::class);
         Route::resource("/categories", categoryController::class);
         Route::resource("/menus", menuController::class);
@@ -39,7 +39,8 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:staff')->group(function () {
         Route::get("/new-order", [orderController::class, "order"])->name("neworder");
         Route::post("/new-order", [orderController::class, "storeOrder"])->name("newOrder.submit");
-        Route::get("/order/{order_id}", [orderController::class, "checkOrder"])->name("order");
-        Route::get("/orders", [orderController::class, "allOrder"])->name("orders");
     });
+
+    Route::get("/order/{order_id}", [orderController::class, "checkOrder"])->name("order");
+    Route::get("/orders", [orderController::class, "allOrder"])->name("orders");
 });
